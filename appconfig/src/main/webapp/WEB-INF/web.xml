@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<web-app version="2.5"  
+    xmlns="http://java.sun.com/xml/ns/javaee"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee  
+    http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">  
+ <!--加载Spring XML配置文件 -->
+	<context-param>
+		<param-name>
+			contextConfigLocation
+		</param-name>
+		<param-value> 
+			classpath:/spring/**/*-config.xml
+		</param-value>
+	</context-param> 
+	  <!-- Spring Secutiry3.1的过滤器链配置 -->
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping> 
+ <!-- Spring 容器启动监听器 -->
+  <listener>
+    <description>在Web应用程序关闭时IntrospectorCleanupListener将会刷新JDK的JavaBeans的Introspector缓存。
+		在你的web.xml中注册这个listener来确保Web应用程序的类加载器以及其加载的类正确的释放资源。IntrospectorCleanupListener应该注册为web.xml中的第一个Listener，
+		在任何其他Listener之前注册，比如在Spring's ContextLoaderListener注册之前，才能确保IntrospectorCleanupListener在Web应用的生命周期适当时机生效。</description>
+    <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+  </listener>
+  <listener>
+    <description>spring 配置文件加载监听器。</description>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <servlet>
+  <!-- 设置编码 -->
+  <filter>
+  	<description>spring mvc框架解决中文乱码过滤器。</description>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>utf-8</param-value>
+    </init-param>
+    <init-param>
+      <param-name>forceEncoding</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+  
+  <filter-mapping>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <!-- end -->
+  
+  <filter>
+    <description>开启open entity manager in view模式</description>
+    <filter-name>OpenEntityManagerInViewFilter</filter-name>
+    <filter-class>cn.com.cookie.common.filter.MyOpenEntityManagerInViewFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>OpenEntityManagerInViewFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  <!-- servlet -->
+<servlet-name>mainentry</servlet-name>
+	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:spring/dispatcher-servlet.xml</param-value>
+		 </init-param>
+		 <init-param>
+		     <param-name>throwExceptionIfNoHandlerFound</param-name>
+		     <param-value>true</param-value>
+		 </init-param>
+	<load-on-startup>1</load-on-startup>
+</servlet>
+  
+  <servlet-mapping>
+    <servlet-name>mainentry</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+	<!-- 会话超时设置 -->  
+  <session-config>
+    <session-timeout>30</session-timeout>
+  </session-config> 
+  <!--系统欢迎页面 -->
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+	
+<!-- 404错误拦截 -->
+  <error-page>
+    <error-code>404</error-code>
+    <location>/errorpage/error404.html</location>
+  </error-page>
+  <!-- 400错误拦截 -->
+  <error-page>
+    <error-code>400</error-code>
+    <location>/errorpage/error400.html</location>
+  </error-page>
+  <!-- 500错误拦截 -->
+  <error-page>
+    <error-code>500</error-code>
+    <location>/errorpage/error500.html</location>
+  </error-page>
+  <!-- 未捕获的错误，同样可指定其它异常类，或自定义异常类 -->
+	<error-page>
+	    <exception-type>java.lang.Exception</exception-type>
+	    <location>/errorpage/error.html</location>
+	</error-page>
+</web-app>
